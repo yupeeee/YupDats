@@ -9,6 +9,10 @@ __all__ = [
 ]
 
 
+def identity(image):
+    return image
+
+
 def numpy_image_to_tensor(
         numpy_image: np.ndarray,
 ) -> torch.Tensor:
@@ -19,7 +23,9 @@ def numpy_image_to_tensor(
 
 
 default_transforms = {
-    "CIFAR": None,
+    "CIFAR10": identity,
+
+    "CIFAR100": identity,
 
     "ImageNet": tf.Compose([
         tf.CenterCrop(256),
@@ -28,12 +34,34 @@ default_transforms = {
 }
 
 image_classification_transforms = {
-    # CIFAR
-    "CIFAR": tf.Compose([
+    # CIFAR10
+    "CIFAR10": tf.Compose([
+        default_transforms["CIFAR10"],
         tf.ToTensor(),
     ]),
-    "CIFAR_uint8": tf.Compose([
+    "CIFAR10_uint8": tf.Compose([
+        default_transforms["CIFAR10"],
         numpy_image_to_tensor,
+    ]),
+    "CIFAR10+norm": tf.Compose([
+        default_transforms["CIFAR10"],
+        tf.ToTensor(),
+        normalize["CIFAR10"],
+    ]),
+
+    # CIFAR100
+    "CIFAR100": tf.Compose([
+        default_transforms["CIFAR100"],
+        tf.ToTensor(),
+    ]),
+    "CIFAR100_uint8": tf.Compose([
+        default_transforms["CIFAR100"],
+        numpy_image_to_tensor,
+    ]),
+    "CIFAR100+norm": tf.Compose([
+        default_transforms["CIFAR100"],
+        tf.ToTensor(),
+        normalize["CIFAR100"],
     ]),
 
     # ImageNet
