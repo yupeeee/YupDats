@@ -3,7 +3,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 import numpy as np
 from PIL import Image
 import torch
-from torchvision import transforms as tf
+from torchvision.datasets import DatasetFolder
 
 __all__ = [
     "ImageClassificationDataset",
@@ -11,13 +11,12 @@ __all__ = [
 
 
 class ImageClassificationDataset:
-    default_transform = tf.ToTensor()
     default_channel = "RGB"
 
     def __init__(
             self,
             name: str,
-            transform: Optional[Callable] = default_transform,
+            transform: Optional[Callable] = None,
             target_transform: Optional[Callable] = None,
     ) -> None:
         self.name = name
@@ -67,8 +66,6 @@ class ImageClassificationDataset:
             directory: str,
             extensions: List[str],
     ) -> List[Tuple[str, int]]:
-        from torchvision.datasets import DatasetFolder
-
         datasetfolder = DatasetFolder(
             root=directory,
             loader=None,

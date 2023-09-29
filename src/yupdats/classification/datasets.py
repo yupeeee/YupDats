@@ -1,15 +1,10 @@
 from typing import Callable, Optional
 
 import os
-import numpy as np
-import torch
-from torchvision import transforms as tf
 
 from .base import ImageClassificationDataset
 
 __all__ = [
-    "image_classification_transforms",
-
     "Caltech101",
     "Caltech256",
     "CIFAR10",
@@ -21,52 +16,11 @@ __all__ = [
 ]
 
 
-def numpy_image_to_tensor(
-        numpy_image: np.ndarray,
-) -> torch.Tensor:
-    return torch.from_numpy(numpy_image).permute(2, 0, 1)
-
-
-image_classification_transforms = {
-    "default": tf.ToTensor(),
-
-    "numpy_to_tensor": numpy_image_to_tensor,
-
-    "resize28": tf.Compose([
-        tf.Resize((28, 28)),
-        tf.ToTensor(),
-    ]),
-
-    "resize32": tf.Compose([
-        tf.Resize((32, 32)),
-        tf.ToTensor(),
-    ]),
-
-    "resize224": tf.Compose([
-        tf.Resize((224, 224)),
-        tf.ToTensor(),
-    ]),
-
-    "resize256": tf.Compose([
-        tf.Resize((256, 256)),
-        tf.ToTensor(),
-    ]),
-
-    "centercrop256_resize224": tf.Compose([
-        tf.CenterCrop(256),
-        tf.Resize(224),
-        tf.ToTensor(),
-    ]),
-}
-
-default_transform = image_classification_transforms["default"]
-
-
 class Caltech101(ImageClassificationDataset):
     def __init__(
             self,
             root: str,
-            transform: Optional[Callable] = default_transform,
+            transform: Optional[Callable] = None,
             target_transform: Optional[Callable] = None,
             download: bool = False,
     ) -> None:
@@ -118,7 +72,7 @@ class Caltech256(ImageClassificationDataset):
     def __init__(
             self,
             root: str,
-            transform: Optional[Callable] = default_transform,
+            transform: Optional[Callable] = None,
             target_transform: Optional[Callable] = None,
             download: bool = False,
     ) -> None:
@@ -158,7 +112,7 @@ class CIFAR10(ImageClassificationDataset):
             self,
             root: str,
             train: bool = True,
-            transform: Optional[Callable] = default_transform,
+            transform: Optional[Callable] = None,
             target_transform: Optional[Callable] = None,
             download: bool = False,
     ) -> None:
@@ -191,7 +145,7 @@ class CIFAR100(ImageClassificationDataset):
             self,
             root: str,
             train: bool = True,
-            transform: Optional[Callable] = default_transform,
+            transform: Optional[Callable] = None,
             target_transform: Optional[Callable] = None,
             download: bool = False,
     ) -> None:
@@ -224,7 +178,7 @@ class Country211(ImageClassificationDataset):
             self,
             root: str,
             split: str = "train",
-            transform: Optional[Callable] = default_transform,
+            transform: Optional[Callable] = None,
             target_transform: Optional[Callable] = None,
             download: bool = False,
     ) -> None:
@@ -256,7 +210,7 @@ class FashionMNIST(ImageClassificationDataset):
             self,
             root: str,
             train: bool = True,
-            transform: Optional[Callable] = default_transform,
+            transform: Optional[Callable] = None,
             target_transform: Optional[Callable] = None,
             download: bool = False,
     ) -> None:
@@ -289,7 +243,7 @@ class ImageNet(ImageClassificationDataset):
             self,
             root: str,
             split: str = "train",
-            transform: Optional[Callable] = default_transform,
+            transform: Optional[Callable] = None,
             target_transform: Optional[Callable] = None,
     ) -> None:
         from torchvision.datasets import ImageNet as Dataset
@@ -332,7 +286,7 @@ class MNIST(ImageClassificationDataset):
             self,
             root: str,
             train: bool = True,
-            transform: Optional[Callable] = default_transform,
+            transform: Optional[Callable] = None,
             target_transform: Optional[Callable] = None,
             download: bool = False,
     ) -> None:
