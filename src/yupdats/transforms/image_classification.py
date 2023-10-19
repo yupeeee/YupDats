@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+import torch.nn as nn
 import torchvision.transforms as tf
 
 from .normalizations import *
@@ -7,10 +8,6 @@ from .normalizations import *
 __all__ = [
     "image_classification_transforms",
 ]
-
-
-def identity(image):
-    return image
 
 
 def numpy_image_to_tensor(
@@ -23,9 +20,9 @@ def numpy_image_to_tensor(
 
 
 default_transforms = {
-    "CIFAR10": identity,
+    "CIFAR10": nn.Identity(),
 
-    "CIFAR100": identity,
+    "CIFAR100": nn.Identity(),
 
     "ImageNet": tf.Compose([
         tf.CenterCrop(256),

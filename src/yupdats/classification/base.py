@@ -90,7 +90,7 @@ class ImageClassificationDataset:
     def initialize(
             self,
             data: Union[List[Tuple[str, int]], np.ndarray, torch.Tensor],
-            targets: Union[List[int], torch.Tensor],
+            targets: Union[List[int], np.ndarray, torch.Tensor],
             class_labels: Union[Dict[int, str], List[str]],
     ) -> None:
         # initialize
@@ -119,14 +119,28 @@ class ImageClassificationDataset:
         for i in indices:
             data, target = self[i]
 
-            data_c.append(data.unsqueeze(dim=0))
+            if isinstance(data, np.ndarray):
+                data_c.append(np.expand_dims(data, axis=0))
+
+            elif isinstance(data, torch.Tensor):
+                data_c.append(data.unsqueeze(dim=0))
+
+            else:
+                raise TypeError(
+                    f"data type must be ndarray or Tensor, got {type(data)}"
+                )
 
             if isinstance(target, int):
                 target = torch.Tensor([target, ]).to(torch.int64)[0]
 
             targets_c.append(target.unsqueeze(dim=0))
 
-        data_c = torch.cat(data_c, dim=0)
+        if isinstance(data, np.ndarray):
+            data_c = np.concatenate(data_c, axis=0)
+
+        else:
+            data_c = torch.cat(data_c, dim=0)
+
         targets_c = torch.cat(targets_c, dim=0)
 
         return data_c, targets_c
@@ -148,3 +162,15 @@ class ImageClassificationDataset:
         std = data.std(axis=(0, 1, 2))
 
         return mean, std
+
+    def fragment(
+            self,
+            pct: float,
+            random_pick: bool = False,
+            keep_class_balance: bool = False,
+            name: Optional[str] = None,
+            verbose: Optional[bool] = False,
+    ):
+        from .fragment import _fragment
+
+        return _fragment(self, pct, random_pick, keep_class_balance, name, verbose)
